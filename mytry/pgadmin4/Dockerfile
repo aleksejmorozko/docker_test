@@ -1,0 +1,4 @@
+FROM dpage/pgadmin4
+ENV PGADMIN_DEFAUL_EMAIL='aleksejmorozko@gmail.com'
+ENV PGADMIN_DEFAULT_PASSWORD='1'
+EXPOSE 80
