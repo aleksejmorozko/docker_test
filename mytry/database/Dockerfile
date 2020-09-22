@@ -4,4 +4,4 @@ ENV POSTGRES_DB=alexdb
 ENV POSTGRES_PASSWORD=faizmcu
 EXPOSE 5432
 
-#Start: docker run -p 5432:5432 IMAGES
+#Start: docker run -p 5432:5432 -d IMAGES
