@@ -1,4 +1,7 @@
-FROM postgres:13
-ENV POSTGRES_USER="alex"
-ENV POSTGRES_PASSWORD="faizmcu"
-EXPOSE 4444
+FROM postgres:13-alpine
+ENV POSTGRES_USER=alex
+ENV POSTGRES_DB=alexdb
+ENV POSTGRES_PASSWORD=faizmcu
+EXPOSE 5432
+
+#Start: docker run -p 5432:5432 IMAGES

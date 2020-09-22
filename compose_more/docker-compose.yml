@@ -1,0 +1,32 @@
+version: '3.3'
+services:
+    api:
+        build: .
+        image: mywebimage:0.0.1
+        ports:
+            - 8080:8080
+        volumes:
+            - /app/node_modules/
+        depends_on:
+            - timescale
+        command: npm run dev
+        networks:
+            - webappnetwork
+    timescale:
+        image: timescale/timescaledb-postgis:latest-pg11
+        environment:
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+        command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+        volumes:
+          - ./create_schema.sql:/docker-entrypoint-initdb.d/create_schema.sql
+        networks:
+           - webappnetwork
+    ping:
+       image: willfarrell/ping
+       environment:
+           HOSTNAME: "localhost"
+           TIMEOUT: 300
+networks:
+   webappnetwork:
+       driver: bridge
