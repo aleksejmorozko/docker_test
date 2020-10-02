@@ -1,6 +1,6 @@
 drop table if exists t;
-create table t(id serial, name text);
-insert into t (name) values ('aaa'),('bbb'),('ccc'),('ddd');
+create table t(id serial, b int);
+insert into t (name) values (1),(2),(3),(4);
 
 begin;
 set transaction isolation level repeatable read;
@@ -8,9 +8,9 @@ set transaction isolation level read committed;
 set transaction isolation level read uncommitted;
 set transaction isolation level serializable;
 
-update t set name = 'XX11' where id = 1;
-update t set name = 'YY11' where id = 2;
-update t set name = 'ZZ11' where id = 3;
+update t set b=b+1 where id = 1;
+update t set b=b+1 where id = 2;
+update t set b=b+1 where id = 3;
 savepoint a0;
 rollback to savepoint a0;
 commit;
