@@ -1,6 +1,6 @@
 drop table if exists t;
 create table t(id serial, b int);
-insert into t (name) values (1),(2),(3),(4);
+insert into t (name) values (0),(0),(0),(0);
 
 begin;
 set transaction isolation level repeatable read;
@@ -15,7 +15,7 @@ savepoint a0;
 rollback to savepoint a0;
 commit;
 
-select * from t;
+select * from t order by id;
 select xmin, xmax, * from t;
 
 select txid_current();
