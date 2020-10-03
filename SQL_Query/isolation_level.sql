@@ -1,6 +1,6 @@
 drop table if exists t;
 create table t(id serial, b int);
-insert into t (name) values (0),(0),(0),(0);
+insert into t (b) values (0),(0),(0),(0);
 
 begin;
 set transaction isolation level repeatable read;
