@@ -19,3 +19,7 @@ select current_setting('work_mem');
 select set_config('work_mem', '32MB', false); --(true/false показывает на постояннку поменять или на сеанс)
 
 select * from pg_settings;    --настройки работы БД
+
+select * from pg_ls_waldir() order by name;
+
+create extension pgcrypto; select digest('Hello world', 'md5'); --создание исключения "extension" для шифрования строк. шифруется функцией "digest"
