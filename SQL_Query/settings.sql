@@ -29,6 +29,15 @@ select pg_size_pretty(pg_tablespace_size('ts'));        --размер табл�
 select pg_size_pretty(pg_table_size('t'));              --размер таблицы без индексов
 select pg_size_pretty(pg_indexes_size('t'));            --размер индексов
 select pg_size_pretty(pg_total_relation_size('t'));     --размер таблицы и индекса
+select pg_size_pretty(pg_relation_size('users'));       --размер отношений
+create extension pgstattuple;                           --исключение pgstattuple.
+select * from pgstattuple("name table"); \gx            --смотрим процент занятого места таблицей
+
+reindex index 'name index'                              --перестороение индекса (тоже, что и vacuum full, только для индекса)
+reindex table 'name table'                              --перестороение всех индексов таблицы
+reindex database 'name db'                              --перестроить все индексы БД
+reindex system                                          --перестроить все индексы 
+create index on ... concurrently;                       --создание неконкурирующего индекса. не блокирует таблицу. может выпасть ошибка. 
 
 create tablespace ts location '/home/postgres/ts_dir';  --создание табличного пространства в определенном каталоге.
 create database appdb tablespace ts;                    --создание БД с указанием табличного пространства.
