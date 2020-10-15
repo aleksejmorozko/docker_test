@@ -94,3 +94,10 @@ host    replication     replica     10.245.3.33/32    md5
 #PostgreSQL Slave IP Address
 host    replication     replica     10.245.3.33/32   md5
 
+------- 
+su - postgres
+createuser --replication -P replica
+pg_basebackup -h 10.245.3.33 -U replica -D /var/lib/postgresql/data -P --xlog -p 5435
+
+alter system set hot_standby to 'on';
+alter system set listen_addresses to '10.245.3.33';
