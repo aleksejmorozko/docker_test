@@ -66,6 +66,7 @@ oid2name -d "data_lowlevel";                            --просмотр вс�
 select pg_relation_size('t', 'main') main, pg_relation_size('t', 'fsm') fsm, pg_relation_size('t', 'vm') vm; --???
 
 -------настройка репликации 
+--vi /var/lib/postgres/data/pg_postgres.conf
 alter system set listen_addresses to '10.245.3.33';
 alter system set port to '5435';
 alter system set wal_level to 'hot_standby';
@@ -80,3 +81,16 @@ alter system set synchronous_standby_names to 'test1';
 show all;
 
 select pg_reload_conf();				--перезагрузка конфига;
+
+mkdir -p /var/lib/postgresql/data/archive/
+chmod 700 /var/lib/postgresql/data/archive/
+chown -R postgres:postgres /var/lib/postgresql/data/archive/
+
+--vi /var/lib/postgres/data/pg_hba.conf
+#Localhost
+host    replication     replica     127.0.0.1/32    md5
+#PostgreSQL Master IP Address
+host    replication     replica     10.245.3.33/32    md5
+#PostgreSQL Slave IP Address
+host    replication     replica     10.245.3.33/32   md5
+
