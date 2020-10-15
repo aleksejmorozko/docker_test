@@ -64,3 +64,19 @@ vacuum t; -- очистка
 select pg_relation_filepath('t_pkey');                  --определение расположение файла ро индексу таблицы
 oid2name -d "data_lowlevel";                            --просмотр всех объектов базы
 select pg_relation_size('t', 'main') main, pg_relation_size('t', 'fsm') fsm, pg_relation_size('t', 'vm') vm; --???
+
+-------настройка репликации 
+alter system set listen_addresses to '10.245.3.33';
+alter system set port to '5435';
+alter system set wal_level to 'hot_standby';
+alter system set synchronous_commit to 'local';
+alter system set archive_mode to 'on';
+alter system set archive_command to 'cp %p /var/lib/postgresql/data/archive/%f';
+alter system set max_wal_senders to '2';
+alter system set wal_keep_segments to '10';
+alter system set show wal_keep to '10';
+alter system set synchronous_standby_names to 'test1';
+
+show all;
+
+select pg_reload_conf();				--перезагрузка конфига;
