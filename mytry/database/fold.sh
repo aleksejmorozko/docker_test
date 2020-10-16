@@ -1,0 +1,1 @@
+mkdir /var/lib/postgresql/data/archive && chmod 700 /var/lib/postgresql/data/archive && chown -R postgres:postgres /var/lib/postgresql/data/archive
