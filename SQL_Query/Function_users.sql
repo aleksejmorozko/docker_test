@@ -30,4 +30,4 @@ drop index fast_user;
 create index fast_user on users(b);
 --select Concat('user_',  cast((select count (*) from users) as char(20)));
 --create table users(a int, b text, c date);
-SELECT pg_size_pretty(pg_database_size('test_db'));
+SELECT pg_size_pretty(pg_database_size('postgres'));
