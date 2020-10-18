@@ -29,7 +29,60 @@ select pg_reload_conf();
 su - postgres
 pg_basebackup -P -R -X stream -c fast -h 192.168.100.3 (хост мастера) -U postgres -D /var/db/postgres/data (путь папки данных Slave)
 --or 
-pg_basebackup -P -R -X stream -c fast -h 172.17.0.2 -U postgres -D /var/lib/postgresql/data1 (путь папки данных Slave)
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -P -R -X stream -c fast -h 172.17.0.2 -U postgres -D /var/lib/postgresql/data' (путь папки данных Slave)
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl restart -D /var/lib/postgresql/data'
+--alter system set data_directory to '/var/lib/postgresql/data';
 
-alter system set data_directory to '/var/lib/postgresql/data1';
-su - postgres -c '/var/lib/postgresql/data/pg_ctl stop -D /var/lib/postgresql/data1'
+---------------------------------------------------------------------------------------------------------
+--~/slave/postgresql.conf строку port = 5433
+mkdir /var/db/data
+chmod -R 700 /var/db/data/
+chown postgres:postgres /var/db/data
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -P -R -X stream -c fast -h 172.17.0.2 -U postgres -D /var/db/data'
+--su - postgres -c '/usr/lib/postgresql/13/bin/initdb -D /var/db/data/'
+--Исправление postgres.conf AND postgres.auto.conf
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/db/data/ -l /var/db/data/slave.log'
+
+----!!!!!!!!!!!!!!!---------LOGICAL REPLICATION ---------!!!!!!!!!!!!!---------
+Т.е. у нас будет два локальных демона pg, которые будут друг другу реплицировать отдельные таблицы. Пусть один будет работать на порту 5433, другой — на 5434.
+Для этого надо вписать в ~/master/postgresql.conf строку port = 5433, в ~/slave/postgresql.conf — строку port = 5434, соответственно.
+
+/usr/local/pgsql/bin/initdb -D ~/master
+/usr/local/pgsql/bin/initdb -D ~/slave
+---------------------------------
+В обоих конфигах postgresql.conf надо указать:
+wal_level = logical 
+-------------------------
+pg_hba.conf:
+local   replication     postgres                                trust
+----------------------------
+Запускаем оба демона:
+
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/db/master/ -l /var/db/master/master.log'
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/db/slave/ -l /var/db/slave/slave.log'
+
+--------------SETUP REPLICATION---------------
+--master:
+/usr/local/pgsql/bin/psql -p 5433
+
+CREATE TABLE repl (
+   id int, 
+   name text, 
+   primary key(id)
+);
+CREATE PUBLICATION testpub;
+
+ALTER PUBLICATION testpub ADD TABLE repl;
+
+--slave:
+/usr/local/pgsql/bin/psql -p 5434
+
+REATE TABLE repl (
+    id int, 
+    name text, 
+    primary key(id)
+);
+
+CREATE SUBSCRIPTION testsub CONNECTION 'port=5433 dbname=postgres' PUBLICATION testpub;
+
+-----------------COMPLETE SETTINGS------------------
