@@ -1,5 +1,5 @@
 --function to create new users
-select more_users(10000000);
+select more_users(100000);
 select count(*) from users;
 select * from users limit(5);
 --delete not needed users

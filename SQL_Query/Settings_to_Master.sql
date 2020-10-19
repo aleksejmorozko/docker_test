@@ -1,12 +1,10 @@
-touch /var/log/postgresql.log
-chmod a-r,u+r /var/log/postgresql.log
-chown postgres:postgres /var/log/postgresql.log
+touch /var/log/postgresql/postgresql.log && chmod a-r,u+r /var/log/postgresql/postgresql.log && chown postgres:postgres /var/log/postgresql/postgresql.log
 
 alter system set listen_addresses to '*';
 alter system set max_connections to 10;
 alter system set log_destination to '';
 alter system set logging_collector to 'on';
-alter system set log_directory to '/var/log';
+alter system set log_directory to '/var/log/postgresql';
 alter system set log_filename to 'postgresql.log';
 alter system set log_rotation_size to '100MB';
 alter system set client_min_messages to 'notice';
@@ -17,31 +15,31 @@ alter system set log_connections to 'on';
 alter system set log_disconnections to 'on'
 alter system set log_hostname to 'on';
 alter system set log_line_prefix to '%t';
+--alter system set wal_level to 'hot_standby';
 alter system set wal_level to 'replica';
 alter system set wal_log_hints to 'on';
 alter system set max_wal_senders to '3';
+alter system set full_page_writes to 'on';
 --alter system set wal_keep_segments to '64';
+
+--Slave
 alter system set hot_standby to 'on';
 
 select pg_reload_conf();
 
---команды на Slave
+--команды на Slave физический сервер
 su - postgres
 pg_basebackup -P -R -X stream -c fast -h 192.168.100.3 (хост мастера) -U postgres -D /var/db/postgres/data (путь папки данных Slave)
---or 
-su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -P -R -X stream -c fast -h 172.17.0.2 -U postgres -D /var/lib/postgresql/data' (путь папки данных Slave)
-su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl restart -D /var/lib/postgresql/data'
+--OR FOR DOCKER Slave
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -P -R -X stream -c fast -h 172.17.0.2 -U postgres -D /var/lib/postgresql/data1' 
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -F plain -P -R -X stream -c fast -h 172.17.0.2 -p 5432 -U postgres -D /var/lib/postgresql/data1'
+--~/slave/postgresql.conf строку port = 5433
+--Исправление postgres.conf AND postgres.auto.conf строку port = 5433
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/lib/postgresql/data1 -l /var/lib/postgresql/data1/slave.log'
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl restart -D /var/lib/postgresql/data1'
 --alter system set data_directory to '/var/lib/postgresql/data';
 
----------------------------------------------------------------------------------------------------------
---~/slave/postgresql.conf строку port = 5433
-mkdir /var/db/data
-chmod -R 700 /var/db/data/
-chown postgres:postgres /var/db/data
-su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -P -R -X stream -c fast -h 172.17.0.2 -U postgres -D /var/db/data'
---su - postgres -c '/usr/lib/postgresql/13/bin/initdb -D /var/db/data/'
---Исправление postgres.conf AND postgres.auto.conf
-su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/db/data/ -l /var/db/data/slave.log'
+-------------------------------------------------------------------------------
 
 ----!!!!!!!!!!!!!!!---------LOGICAL REPLICATION ---------!!!!!!!!!!!!!---------
 Т.е. у нас будет два локальных демона pg, которые будут друг другу реплицировать отдельные таблицы. Пусть один будет работать на порту 5433, другой — на 5434.
@@ -52,10 +50,10 @@ su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/db/data/ -l /v
 ---------------------------------
 В обоих конфигах postgresql.conf надо указать:
 wal_level = logical 
--------------------------
+---------------------------------
 pg_hba.conf:
 local   replication     postgres                                trust
-----------------------------
+---------------------------------
 Запускаем оба демона:
 
 su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/db/master/ -l /var/db/master/master.log'
