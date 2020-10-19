@@ -2,7 +2,7 @@
 Мастер
 1) создание контейнеров postgres
 2) в контейнере мастера делаем log-файл и правим конфиги postgres.conf по инструкции
-	(touch /var/log/postgresql/postgresql.log && chmod a-r,u+r /var/log/postgresql/postgresql.log && chown postgres:postgres /var/log/postgresql/postgresql.log)
+	touch /var/log/postgresql/postgresql.log && chmod a-r,u+r /var/log/postgresql/postgresql.log && chown postgres:postgres /var/log/postgresql/postgresql.log
 3) в конфиге pg_hba.conf добавляем строки 
 	host	replication		postgres		172.17.0.0/24		trust
 	host	all			all			172.17.0.0/24		trust
@@ -15,13 +15,21 @@
 Слейв
 1) меняем пароль пользователю postgres (su - postgres) 
 2) создаем поток копирования с мастера
-(su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -F plain -P -R -X stream -c fast -h 172.17.0.2 -p 5432 -U postgres -D /var/lib/postgresql/data1')
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -F plain -P -R -X stream -c fast -h 172.17.0.2 -p 5432 -U postgres -D /var/lib/postgresql/data1'
 3) в файле postgres.conf добавляем строку (port = 5433) - порт запуска демона. работает параллельно основному. без основного потухнет сервер.
-4) запускаем самого демона
-(su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/lib/postgresql/data1 -l /var/lib/postgresql/data1/slave.log')
+4) запускаем сам демон
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/lib/postgresql/data1 -l /var/lib/postgresql/data1/slave.log'
 5'') при перезагрузке тухнет параллельный демон реплики и его необходимо запустить заново
 Слейв готов
 --------------------------------COMPLETE SETTINNGS-------------------------------------------------
+
+При необходимости производят отключение Slave от репликации. Появляется возможность изменения БД напрямую.
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl promote -D /var/lib/postgresql/data1'
+После этот сервер делают основным, с изменением конфига, а поломаный перестраивают как реплику и после починки подключают слейвом
+
+Зеркаало = Репликация. Реплика не является панацеей, копируются и все косяки. Делать бэкапы!  
+---------------------------------------------------------------------------------------------------
+
 touch /var/log/postgresql/postgresql.log && chmod a-r,u+r /var/log/postgresql/postgresql.log && chown postgres:postgres /var/log/postgresql/postgresql.log
 
 set transaction isolation level read committed;
