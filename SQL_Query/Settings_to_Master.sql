@@ -15,10 +15,10 @@
 Слейв
 1) меняем пароль пользователю postgres (su - postgres) 
 2) создаем поток копирования с мастера
-(su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -F plain -P -R -X stream -c fast -h 172.17.0.2 -p 5432 -U postgres -D /var/lib/postgresql/data1')
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_basebackup -F plain -P -R -X stream -c fast -h 172.17.0.2 -p 5432 -U postgres -D /var/lib/postgresql/data1'
 3) в файле postgres.conf добавляем строку (port = 5433) - порт запуска демона. работает параллельно основному. без основного потухнет сервер.
 4) запускаем самого демона
-(su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/lib/postgresql/data1 -l /var/lib/postgresql/data1/slave.log')
+su - postgres -c '/usr/lib/postgresql/13/bin/pg_ctl start -D /var/lib/postgresql/data1 -l /var/lib/postgresql/data1/slave.log'
 5'') при перезагрузке тухнет параллельный демон реплики и его необходимо запустить заново
 Слейв готов
 --------------------------------COMPLETE SETTINNGS-------------------------------------------------
