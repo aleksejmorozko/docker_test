@@ -1,3 +1,4 @@
 dist/
 docker-proxy/
 dokk/
+swarmprom/
