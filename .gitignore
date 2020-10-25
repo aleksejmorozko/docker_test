@@ -2,3 +2,4 @@ dist/
 docker-proxy/
 dokk/
 swarmprom/
+docker-swarm-visualizer/

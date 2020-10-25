@@ -1,3 +1,9 @@
 docker stop $(docker ps -a -q)                      - остановка всех контейнеров
 docker rm $(docker ps -a -q)                        - удаление всех контейнеров
 docker rmi $(docker images | awk '{ print $3; }')   - удаление всех неиспользуемых images
+
+docker service rm $(docker service ls | awk '{print $1}') 
+docker config rm $(docker config ls | awk '{print $1}') 
+docker network prune
+docker system prune
+docker stack deploy -c docker-compose.yml monitor
