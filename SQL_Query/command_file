@@ -25,3 +25,19 @@ docker service create \
 
 
 ab -n 10000 -c 50 http://192.168.99.101/            - проверка на пропускную способность сервера. 
+
+docker run -p 80:80 \
+    -e 'PGADMIN_DEFAULT_EMAIL=test@test' \
+    -e 'PGADMIN_DEFAULT_PASSWORD=test' \
+    -d dpage/pgadmin4
+
+
+docker run -d \
+    --name some-postgres 
+    -e POSTGRES_PASSWORD=12345678 \
+    -e PGDATA=/var/lib/postgresql/data/pgdata \
+    -v /custom/mount:/var/lib/postgresql/data \
+    postgres
+
+docker service create --name=postgres --publish=5432:5432 --constraint=node.role==worker postgres:swarm
+docker service create --name=pgadmin --publish=5050:80 pgadmin:swarm
