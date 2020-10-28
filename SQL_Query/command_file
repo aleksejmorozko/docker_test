@@ -6,4 +6,22 @@ docker service rm $(docker service ls | awk '{print $1}')
 docker config rm $(docker config ls | awk '{print $1}') 
 docker network prune
 docker system prune
-docker stack deploy -c docker-compose.yml monitor
+docker stack deploy -c docker-compose.yml mon
+
+PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '          - Enable Docker-machine
+docker-machine ssh sw1                              - Connecting to wm1
+
+
+docker network create --driver overlay --subnet 10.10.1.0/24 --opt encrypted services
+
+docker service create --name busybox --network services busybox sleep 3000
+	
+docker service create \
+	--name=viz \
+	--publish=8080:8080 \
+	--constraint=node.role==manager \
+	--mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+	dockersamples/visualizer
+
+
+ab -n 10000 -c 50 http://192.168.99.101/            - проверка на пропускную способность сервера. 
