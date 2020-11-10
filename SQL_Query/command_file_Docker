@@ -11,22 +11,19 @@ docker stack deploy -c docker-compose.yml mon
 PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '          - Enable Docker-machine
 docker-machine ssh sw1                              - Connecting to wm1
 
-
-docker network create --driver overlay --subnet 10.10.1.0/24 --opt encrypted services
-
+-- создание изолированной сети для контейнеров
+docker network create --driver overlay --subnet 10.10.1.0/24 --opt encrypted services_net
+-- обыкновенный сервис busybox для теста
 docker service create --name busybox --network services busybox sleep 3000
-	
-docker service create \
-	--name=viz \
-	--publish=8080:8080 \
-	--constraint=node.role==manager \
-	--mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
-	dockersamples/visualizer
+-- visualizer - Визуализация работы swarm оркестра
+docker service create --name=viz --publish=8080:8080 --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
 
 
 ab -n 10000 -c 50 http://192.168.99.101/            - проверка на пропускную способность сервера. 
 
-docker run -p 80:80 \
+docker build -t <<images>> .
+
+docker run -p 80:80 
     -e 'PGADMIN_DEFAULT_EMAIL=test@test' \
     -e 'PGADMIN_DEFAULT_PASSWORD=test' \
     -d dpage/pgadmin4
@@ -39,5 +36,7 @@ docker run -d \
     -v /custom/mount:/var/lib/postgresql/data \
     postgres
 
+docker exec -it <<images>> bash
+
 docker service create --name=postgres --publish=5432:5432 --constraint=node.role==worker postgres:swarm
-docker service create --name=pgadmin --publish=5050:80 pgadmin:swarm
+docker service create --name=pgadmin -e 'PGADMIN_DEFAULT_EMAIL=test@test' -e 'PGADMIN_DEFAULT_PASSWORD=test' --publish=5050:80 dpage/pgadmin
