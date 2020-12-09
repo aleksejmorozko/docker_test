@@ -44,8 +44,8 @@ docker service create --name=pgadmin -e 'PGADMIN_DEFAULT_EMAIL=test@test' -e 'PG
 
 
 
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=faizmcuAa123" -p 1433:1433 --name sql1 -h sql1 -d mcr.microsoft.com/mssql/server:2019-latest
-docker exec -it $(docker ps | awk $'{print $1}') /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P faizmcuAa123
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=strong_PASSWORD" -p 1433:1433 --name sql1 -h sql1 -d mcr.microsoft.com/mssql/server:2019-latest
+docker exec -it $(docker ps | awk $'{print $1}') /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P strong_PASSWORD
 
 
 ------------------------------------
