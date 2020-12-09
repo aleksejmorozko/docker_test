@@ -16,7 +16,7 @@ pipeline {
                 sh 'ssh jenkins@172.17.0.3 \'hostname\''
             }
         }
-        stage("First step") {
+        stage("Second step") {
             steps {
                 sh 'ssh jenkins@172.17.0.3 \'uptime\''
             }
