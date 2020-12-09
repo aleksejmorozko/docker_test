@@ -57,3 +57,5 @@ docker run -d -p 8080:80 nginx
 JENKINS
 docker run -p 8080:8080 -p 50000:50000 jenkins
 docker exec -it -u root <<container>> bash              --старт под учеткой root
+
+docker inspect "mycontainer" -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
