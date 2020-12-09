@@ -52,7 +52,7 @@ docker exec -it $(docker ps | awk $'{print $1}') /opt/mssql-tools/bin/sqlcmd -S 
 --необходима настройка ssh сервера 
 --необходима настройка ssh-ключа
 NGINX
-docker run -d -p 8080:80 nginx
+docker run -d -p 80:80 nginx
 
 JENKINS
 docker run -p 8080:8080 -p 50000:50000 jenkins
