@@ -14,7 +14,7 @@ pipeline {
         stage("Create Docker Images") {
             steps {
                 echo ("==== Start build manual project =====")
-                dir ('mytry/pgadmin4') {
+                dir ('mytry/mongo') {
                     sh 'docker build . '
                 }
             }
