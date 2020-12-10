@@ -3,9 +3,14 @@
 properties([disableConcurrentBuilds()])
 
 pipeline {
-    agent { 
-        label 'master'
+    agent {
+        docker {
+            image "project-build:${DOCKER_IMAGE_BRANCH}"
+            args "-v ${PWD}:/usr/src/app -w /usr/src/app"
+            reuseNode true
+            label "build-image"
         }
+    }
     triggers { pollSCM('* * * * *') }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
