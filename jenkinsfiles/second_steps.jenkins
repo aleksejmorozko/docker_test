@@ -15,9 +15,7 @@ pipeline {
         stage("create docker image") {
             steps {
                 echo " ============== start building image =================="
-                {
-                	sh 'docker build -t mongo:latest . '
-                }
+                   	sh 'docker build -t hello-world:latest . '
             }
         }
     }
