@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage("Create Docker Images") {
             steps {
-                echo ("==== Start build manual project =====")
+                echo "==== Start build manual project ====="
                 dir ('mytry/mongo') {
                     sh 'docker build . '
                 }
