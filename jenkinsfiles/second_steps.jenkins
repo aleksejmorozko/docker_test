@@ -1,27 +1,31 @@
 #!groovy
-// Run docker build
+// Check ub1 properties
 properties([disableConcurrentBuilds()])
 
 pipeline {
-    agent {
-        docker {
-            image "project-build:${DOCKER_IMAGE_BRANCH}"
-            args "-v ${PWD}:/usr/src/app -w /usr/src/app"
-            reuseNode true
-            label "build-image"
+    agent { 
+        label 'master'
         }
-    }
-    triggers { pollSCM('* * * * *') }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps()
     }
     stages {
-        stage("create docker image") {
+        stage("Build project") {
+            agent {
+                docker {
+                    image "project-build:${DOCKER_IMAGE_BRANCH}"
+                    args "-v ${PWD}:/usr/src/app -w /usr/src/app"
+                    reuseNode true
+                    label "build-image"
+                }
+            }        
             steps {
-                echo " ============== start building image =================="
-                   	sh 'docker build -t hello-world:latest . '
+                echo "==== Start build manual project ====="
+                dir ('mytry/mongo') {
+                    sh 'docker build . '
+                }
             }
-        }
+        }        
     }
 }
