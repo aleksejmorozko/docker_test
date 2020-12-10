@@ -15,7 +15,7 @@ pipeline {
         stage("create docker image") {
             steps {
                 echo " ============== start building image =================="
-                dir ('docker_test/mongo') {
+                {
                 	sh 'docker build -t mongo:latest . '
                 }
             }
