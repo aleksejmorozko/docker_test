@@ -1,1 +1,1 @@
-FROM mongo:lte
+FROM mongo:latest
