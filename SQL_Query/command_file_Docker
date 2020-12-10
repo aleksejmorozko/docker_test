@@ -55,11 +55,11 @@ NGINX
 docker run -d -p 80:80 nginx
 
 JENKINS
-docker run -p 8080:8080 -p 50000:50000 jenkins/jenkins
-docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 jenkins/jenkins
+docker run -p 8080:8080 -p 50000:50000 jenkins_jenkins
+docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 jenkins_docker  -- WORK
 docker exec -it -u root <<container>> bash              --старт под учеткой root
 
 DOCKER in DOCKER
-docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker
+docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker - NOT WORK JENKINS
 
 docker inspect "mycontainer" -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
