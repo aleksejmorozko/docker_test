@@ -11,21 +11,13 @@ pipeline {
         timestamps()
     }
     stages {
-        stage("Build project") {
-            agent {
-                docker {
-                    image "project-build:${DOCKER_IMAGE_BRANCH}"
-                    args "-v ${PWD}:/usr/src/app -w /usr/src/app"
-                    reuseNode true
-                    label "build-image"
-                }
-            }        
+        stage("Create Docker Images") {
             steps {
                 echo "==== Start build manual project ====="
-                dir ('mytry/mongo') {
-                    sh 'docker build . '
-                }
+                
+                    sh 'docker run hello-world'
+                
             }
-        }        
+        }
     }
 }
