@@ -58,8 +58,9 @@ JENKINS
 docker run -p 8080:8080 -p 50000:50000 jenkins_jenkins
 docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 jenkins_docker  -- WORK
 docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 jenkins/jenkins
+После запуска необходимо в самом контейнере поменять права доступа к самому файлу /var/run/docker.sock, т.к. не отрабатываются права на файл и группу
 docker exec -it -u root <<container>> bash              --старт под учеткой root
-
+После запуска необходимо в самом контейнере поменять права доступа к самому файлу /var/run/docker.sock, т.к. не отрабатываются права на файл и группу
 DOCKER in DOCKER
 docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker - NOT WORK JENKINS
 
