@@ -8,6 +8,7 @@ docker network prune
 docker system prune
 docker stack deploy -c docker-compose.yml mon
 
+docker-machine create --driver virtualbox vm0
 PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '          - Enable Docker-machine
 docker-machine ssh sw1                              - Connecting to wm1
 
