@@ -23,7 +23,7 @@ begin
 end;
 $$ language plpgsql;
 
-truncate users;
+truncate  users RESTART IDENTITY; 								--удаление данных с обнулением счетчиков
 drop table users;
 drop function more_users;
 drop index fast_user;
