@@ -1,5 +1,5 @@
---create table t3 (a serial, b text);
-/*
+create table t3 (a serial, b text);
+
 create or replace function afterinsert_t2()
 returns trigger as
 $$
@@ -9,14 +9,16 @@ begin
 	return new;
 end;
 $$
-language 'plpgsql';*/
+language 'plpgsql';
 
---alter table t3 add column c date ;
-/*drop trigger after_insert_t2 on t;
+alter table t3 add column c date ;
+drop trigger after_insert_t2 on t;
+
 create trigger after_insert_t2
 after insert
 on t2
 for each row
-execute procedure afterinsert_t2();*/
---insert into t2(b) values ('text');
---select * from t3;
+execute procedure afterinsert_t2();
+
+insert into t2(b) values ('text');
+select * from t3;

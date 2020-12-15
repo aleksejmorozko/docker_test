@@ -136,3 +136,57 @@ select * into dbo.Departments
   ) AS t1;
 GO
 
+
+--HomeWork_11
+USE master
+DROP DATABASE IF EXISTS [CorruptionTest]
+CREATE DATABASE [CorruptionTest]
+ALTER DATABASE [CorruptionTest] MODIFY FILE ( NAME = N'CorruptionTest', SIZE = 2GB )
+ALTER DATABASE [CorruptionTest] MODIFY FILE ( NAME = N'CorruptionTest_log', SIZE = 2GB )
+ALTER DATABASE [CorruptionTest] SET RECOVERY FULL;
+ALTER DATABASE [CorruptionTest] SET PAGE_VERIFY CHECKSUM  
+CREATE TABLE CorruptionTest.dbo.mssqltips 
+(increment INT, randomGUID uniqueidentifier, randomValue INT, BigCol CHAR(2000) DEFAULT 'a', INDEX CIX_SQLShack_increment1 UNIQUE CLUSTERED (increment))
+
+SET NOCOUNT ON;
+DECLARE @counter INT = 1;
+BEGIN TRAN
+   WHILE @counter <= 250000
+   BEGIN
+      INSERT INTO CorruptionTest.dbo.mssqltips (increment, randomGUID, randomValue) 
+      VALUES (@counter, NEWID(), ABS(CHECKSUM(NewId())) % 140000000)
+      SET @counter += 1
+   END;
+COMMIT TRAN;
+
+------2------
+USE master;
+ALTER DATABASE [CorruptionTest] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DBCC WRITEPAGE ('CorruptionTest', 1, 8330, 4000, 1, 0x0, 1)
+ALTER DATABASE [CorruptionTest] SET MULTI_USER;
+
+-----3------
+SELECT * FROM [CorruptionTest].[dbo].mssqltips 
+ORDER BY increment DESC
+
+-----6------
+USE [CorruptionTest]
+CREATE TABLE [FillerTable] (
+[c1] INT IDENTITY,
+[c2] CHAR (8000) DEFAULT 'filler');
+
+INSERT INTO [FillerTable] DEFAULT VALUES;
+USE [CorruptionTest]
+CREATE TABLE [ProdTable] (
+[c1] INT IDENTITY,
+[c2] CHAR (8000) DEFAULT 'production');
+CREATE CLUSTERED INDEX [prod_cl] ON [ProdTable] ([c1]);
+
+INSERT INTO [ProdTable] DEFAULT VALUES;
+
+--7-----
+USE [CorruptionTest]
+DROP TABLE [FillerTable];
+
+
+DBCC SHRINKDATABASE ([CorruptionTest]);
