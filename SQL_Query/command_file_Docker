@@ -2,6 +2,8 @@ docker stop $(docker ps -a -q)                      - остановка все�
 docker rm $(docker ps -a -q)                        - удаление всех контейнеров
 docker rmi $(docker images | awk '{ print $3; }')   - удаление всех неиспользуемых images
 
+docker exec -it -u root (docker ps | awk 'NR > 1 && NR < 3  {print $1}') bash         --запуск первого контейнера из списка (docker ps -a)
+
 docker service rm $(docker service ls | awk '{print $1}') 
 docker config rm $(docker config ls | awk '{print $1}') 
 docker network prune
