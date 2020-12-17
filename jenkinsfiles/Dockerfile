@@ -1,5 +1,5 @@
 FROM jenkins/jenkins:lts
-ARG DOCKER_COMPOSE_VERSION=1.25.0
+ARG DOCKER_COMPOSE_VERSION=1.27.4
 USER root
 RUN apt-get update && \
    apt-get upgrade -y && \

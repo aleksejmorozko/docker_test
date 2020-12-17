@@ -27,7 +27,7 @@ pipeline {
             steps {
                 echo "==== Start build manual project ====="
                 dir ('jenkinsfiles'){
-                    sh 'docker build -t aleksejmorozko/jenkins_docker:first . '
+                    sh 'docker build -t aleksejmorozko/jenkins_docker:second . '
                 }
             }
         }
