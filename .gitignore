@@ -5,3 +5,4 @@ swarmprom/
 docker-swarm-visualizer/
 .gitignore
 .vscode/
+.git/
