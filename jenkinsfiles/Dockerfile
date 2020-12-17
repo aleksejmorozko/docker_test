@@ -1,4 +1,4 @@
-FROM aleksejmorozko/jenkins_docker:second
+FROM aleksejmorozko/jenkins_docker:thrid
 USER root
-RUN usermod -a -G docker jenkins && gpasswd -a jenkins docker
+RUN chmod 777 /var/run/docker.sock
 USER jenkins
