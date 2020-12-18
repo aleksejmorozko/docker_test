@@ -64,3 +64,9 @@ DOCKER in DOCKER
 docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker - NOT WORK JENKINS
 
 docker inspect "mycontainer" -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+
+webpanel portainer.io
+curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+docker stack deploy -c portainer-agent-stack.yml portainer
+
+redminer - 
