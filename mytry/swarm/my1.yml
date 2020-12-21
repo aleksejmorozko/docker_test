@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: alex
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@root.com
+      PGADMIN_DEFAULT_PASSWORD: 12345678
+
+  wordpress:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: postgresql
+      WORDPRESS_DB_USER: alex
+      WORDPRESS_DB_PASSWORD: 12345678
+      WORDPRESS_DB_NAME: postgres
+    volumes:
+      - wordpress:/var/www/html
+  
+  nginx:
+    image: nginx
+    ports:
+      - 8888:80
+    environment: 
+      NGINX_HOST: test.com
+      NGINX_PORT: 80
+    volumes:
+      - ng:/etc/nginx/templates
+
+volumes:
+  wordpress:
+  dbdata:
+  ng:
