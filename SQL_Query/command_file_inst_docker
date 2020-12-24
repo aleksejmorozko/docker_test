@@ -19,11 +19,33 @@ newgrp docker
 
 docker-machine create --driver virtualbox vm0
 
-
 install virtualbox-6.1
 
 download boot2docker.iso and mount images in virtualdrive
 
+ошибки: Проблема создания виртуальной машины
+        Проблема создания сети для VM
+
 0) virtualbox -v 6.1 + docker-machine version 0.16.0, build 702c267f
 1) Проблемы с запуском из-за bios sequre - необходимо побаловаться с настройками, чтоб как-то заработало.
 2) sudo apt-get install virtualbox-ext-pack   - ext pack 
+
+-------------------------------------------------------------------
+Настройки UEFI для DELL 5587
+(1) Boot List Option
+    * UEFI
+    Adviced Boot Options
+    * Enable Legacy Options ROM 
+    UEFI Boot Path Sequrity
+    * Never
+(4) * Enable UEFI Capsule Firmware update
+(5) Sequre Boot Enable
+    - Sequre Boot Enable
+    Sequre Boot Mode
+    * Deployed Mode
+(6) Intel SGX Enable
+    *  Enabled
+(7) Virtualization Support
+    * Enable Intel Virtualization technology
+    * Enable VT for Direct I/O
+------------------------------------------------------------------
