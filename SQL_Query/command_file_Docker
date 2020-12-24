@@ -1,3 +1,7 @@
+    docker-machine create --driver virtualbox vm0
+PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '          - Enable Docker-machine
+docker-machine ssh sw1                              - Connecting to wm1
+
 docker stop $(docker ps -a -q)                      - остановка всех контейнеров
 docker rm $(docker ps -a -q)                        - удаление всех контейнеров
 docker rmi $(docker images | awk '{ print $3; }')   - удаление всех неиспользуемых images
@@ -10,10 +14,6 @@ docker network prune
 docker system prune
 docker stack deploy -c docker-compose.yml mon
 
-docker-machine create --driver virtualbox vm0
-PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '          - Enable Docker-machine
-docker-machine ssh sw1                              - Connecting to wm1
-
 -- создание изолированной сети для контейнеров
 docker network create --driver overlay --subnet 10.10.1.0/24 --opt encrypted services_net
 -- обыкновенный сервис busybox для теста
@@ -21,23 +21,13 @@ docker service create --name busybox --network services busybox sleep 3000
 -- visualizer - Визуализация работы swarm оркестра
 docker service create --name=viz --publish=8080:8080 --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
 
-
 ab -n 10000 -c 50 http://192.168.99.101/            - проверка на пропускную способность сервера. 
 
 docker build -t <<images>> .
 
-docker run -p 80:80 
-    -e 'PGADMIN_DEFAULT_EMAIL=test@test' \
-    -e 'PGADMIN_DEFAULT_PASSWORD=test' \
-    -d dpage/pgadmin4
+docker run -p 80:80 -e 'PGADMIN_DEFAULT_EMAIL=test@test' -e 'PGADMIN_DEFAULT_PASSWORD=test' -d dpage/pgadmin4
 
-
-docker run -d \
-    --name some-postgres 
-    -e POSTGRES_PASSWORD=12345678 \
-    -e PGDATA=/var/lib/postgresql/data/pgdata \
-    -v /custom/mount:/var/lib/postgresql/data \
-    postgres
+docker run -d --name some-postgres -e POSTGRES_PASSWORD=12345678 -e PGDATA=/var/lib/postgresql/data/pgdata -v /custom/mount:/var/lib/postgresql/data postgres
 
 docker exec -it <<images>> bash
 
