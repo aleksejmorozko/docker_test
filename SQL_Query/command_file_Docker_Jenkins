@@ -1,0 +1,28 @@
+docker-machine create --driver virtualbox vm0
+
+PS1='[\u@\h \W$(__docker_machine_ps1)]\$ '          - Enable Docker-machine
+docker-machine ssh sw1                              - Connecting to wm1
+
+docker stop $(docker ps -a -q)                      - остановка всех контейнеров
+docker rm $(docker ps -a -q)                        - удаление всех контейнеров
+docker rmi $(docker images | awk '{ print $3; }')   - удаление всех неиспользуемых images
+
+docker exec -it -u root $(docker ps | awk 'NR > 1 && NR < 3  {print $1}') bash         --запуск первого контейнера из списка (docker ps -a)
+
+JENKINS
+docker run -p 8080:8080 -p 50000:50000 jenkins_jenkins
+docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 jenkins_docker  -- WORK
+docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 jenkins/jenkins
+После запуска необходимо в самом контейнере поменять права доступа к самому файлу /var/run/docker.sock, т.к. не отрабатываются права на файл и группу
+docker exec -it -u root <<container>> bash              --старт под учеткой root
+После запуска необходимо в самом контейнере поменять права доступа к самому файлу /var/run/docker.sock, т.к. не отрабатываются права на файл и группу
+DOCKER in DOCKER
+docker run -ti -v /var/run/docker.sock:/var/run/docker.sock docker - NOT WORK JENKINS
+
+docker inspect "mycontainer" -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+
+webpanel portainer.io
+curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+docker stack deploy -c portainer-agent-stack.yml portainer
+
+redminer - 
