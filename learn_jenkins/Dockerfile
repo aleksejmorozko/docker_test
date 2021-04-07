@@ -1,1 +1,1 @@
-FROM jenkins/jenkins:latest
+FROM jenkins/jenkins
